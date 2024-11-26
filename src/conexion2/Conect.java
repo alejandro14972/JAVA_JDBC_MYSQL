@@ -10,7 +10,7 @@ import java.sql.Statement;
 public class Conect {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		
 		Connection cn = null;
 		Statement st = null;
 		ResultSet rs = null;
@@ -18,6 +18,8 @@ public class Conect {
 
 		try {
 			cn = DriverManager.getConnection("jdbc:mysql://localhost/test2", "root", "root");
+			
+			cn.setAutoCommit(false);
 			insertar(cn);
 			consultabd(cn, rs,st);
 			
@@ -34,7 +36,7 @@ public class Conect {
 			//borrar(cn);
 			//consultabd(cn, rs,st);
 			
-			
+			cn.commit();
 			cn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -88,22 +90,28 @@ public class Conect {
 	}
 
 	private static void consultabd(Connection cn, ResultSet rs, Statement st) throws SQLException {
-		System.out.println("consultar registros: ");
-		System.out.println("------------------------------------------------------------------------- ");
-		st = cn.createStatement();
-		String sql = "select idpersona, nombre, apellido, telefono, edad from persona";
-		rs = st.executeQuery(sql);
+	    System.out.println("CONSULTA DE REGISTROS:");
+	    System.out.println("===========================================================================");
+	    System.out.printf("%-10s %-20s %-20s %-15s %-5s%n", "ID", "Nombre", "Apellido", "Teléfono", "Edad");
+	    System.out.println("---------------------------------------------------------------------------");
 
-		while (rs.next()) {
-			String id = rs.getString(1);
-			String nombre = rs.getString(2);
-			String apellido = rs.getString(3);
-			String telefono = rs.getString(4);
-			int edad = rs.getInt(5);
-			System.out.println("ID: " + id + " Nombre: " + nombre + " Apellido: " + apellido + " Teléfono " + telefono
-					+ " Edad " + edad);
-			System.out.println("--------------------------------------------------------------------------- ");
-		}
+	    st = cn.createStatement();
+	    String sql = "SELECT idpersona, nombre, apellido, telefono, edad FROM persona";
+	    rs = st.executeQuery(sql);
+
+	    while (rs.next()) {
+	        String id = rs.getString(1);
+	        String nombre = rs.getString(2);
+	        String apellido = rs.getString(3);
+	        String telefono = rs.getString(4);
+	        int edad = rs.getInt(5);
+	        
+	        // Formateo de los datos en columnas
+	        System.out.printf("%-10s %-20s %-20s %-15s %-5d%n", id, nombre, apellido, telefono, edad);
+	    }
+
+	    System.out.println("===========================================================================");
 	}
+
 
 }
